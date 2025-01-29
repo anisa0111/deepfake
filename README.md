@@ -1,60 +1,98 @@
-# Real-Time-Face-Swapping-Tool-using-Deepfake-Algorithm
-Implemented a cloud-based real-time face-swapping tool to swap faces in a video. Developed a 3-tier architecture to enable efficient deployment of deepfake based face swapping. The proposed 3-tier architecture could potentially be used for deploying many other
-real time applications which rely on complex machine learning models. The Application server serves as an entry point for the user. This provides the user an interface to the underlying cloud infrastructure. The user is then connected to the WebSocket server for real-time duplex communication. Finally, an autoscaling ML inferencing server does the heavy-lifting.
+# Real-Time Face-Swapping Tool using Deepfake Algorithm
 
-Installation -
+## Overview
 
-The installation of Client Application Server and Websocket is similar as both are hosted on the App Engine. The Deepfake model is pre-trained and loaded and used in order to get the merged image. The steps included in installing each component is given below, these instructions are given for Ubuntu 18.04:
+This project implements a cloud-based real-time face-swapping tool that enables face swapping in a video using a deepfake-based model. The system is designed using a 3-tier architecture to ensure efficient deployment of machine learning-based real-time applications. The architecture includes:
 
-1) Client Application Server
+1. **Client Application Server**: The entry point for the user to interact with the cloud infrastructure.
+2. **WebSocket Server**: Handles real-time duplex communication between the client and the system.
+3. **Autoscaling ML Inferencing Server**: Performs the heavy-lifting of running the deepfake model for face swapping.
 
-a) Install all the required python library using ‘pip install -r requirements’
+This architecture allows the seamless deployment of various real-time applications that rely on complex machine learning models.
 
-b) To test the client application locally, we used the command ‘python manage.py runserver’
+## Installation Instructions
 
-c) To run the client on the cloud we need to collect the static files in STATIC_ROOT
+### Prerequisites
 
-folder using ‘python manage.py collectstatic’ and run ‘gcloud app deploy’ to start deployment.
+Ensure you are using **Ubuntu 18.04** or a compatible version.
 
-2) Websocket Server
+### Client Application Server
 
-a) Install all the required python library using ‘pip install -r requirements’
+1. Install the required Python libraries:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-b) To test the websocket locally, we used the command, ‘gunicorn -b 127.0.0.1:8001 -k flask_sockets.worker main:app’.
+2. To test the client application locally:
+   ```bash
+   python manage.py runserver
+   ```
 
-c) To run the websocket on the cloud we used ‘gcloud app deploy’.
+3. To deploy the client on the cloud, collect static files and deploy:
+   ```bash
+   python manage.py collectstatic
+   gcloud app deploy
+   ```
 
-3) Deepfake Prediction model
+### WebSocket Server
 
-a) The deepfake prediction model has to be deployed as a custom routine on the AI Platform as a prediction routine.
+1. Install the required Python libraries:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-b) Run setup.py to package the custom routine and the additional dependencies.
+2. To test the WebSocket server locally:
+   ```bash
+   gunicorn -b 127.0.0.1:8001 -k flask_sockets.worker main:app
+   ```
 
-c) Create a Model on AI Platform and deploy the created package as a version. It is important to specify Pediction. ModelPrediction as the main class which instructs the routine about loading and inferencing from the model.
+3. To deploy the WebSocket server on the cloud:
+   ```bash
+   gcloud app deploy
+   ```
 
-Functionalities of the Program
+### Deepfake Prediction Model
 
-Client Application Server - 
+1. Deploy the deepfake model as a custom routine on the AI Platform:
+   
+   - Run `setup.py` to package the custom routine and dependencies.
+   
+   - Create a model on the AI Platform and deploy the created package as a version.
 
-The client contains 3 important files i.e. app.yaml, static files and facedetect files. The functionalities of each file is given below:
+2. Ensure the `ModelPrediction` class is set as the main class to instruct the system to load and perform inference with the deepfake model.
 
-- App.yaml contains the configuration of the app’s setting. It tells the URL how to respond to handlers and static files. In this case we load the static html files from the static folder using app.yaml.
+## Functionalities of the Program
 
-- Static files contain the HTML and CSS code for our web application which enables the users to access the face swapping video stream.
+### Client Application Server
 
-- The facedetect folder contains the Django default files generated while initializing the Django framework. The views.py is responsible for the request handling of the image. Urls.py redirects the application according to the path provided. Settings.py holds the
-configuration values required for the web application to run.
+The Client Application Server consists of the following key files:
 
-Websocket Server
+1. **app.yaml**: Configures the app's settings, URL routing, and static files.
+2. **Static Files**: Contain HTML and CSS code for the web application, allowing users to access the face-swapping video stream.
+3. **facedetect Folder**: Contains Django default files generated during the framework initialization. Key components:
+   - `views.py`: Handles image requests.
+   - `urls.py`: Manages application routing.
+   - `settings.py`: Contains configuration values for the web app.
 
-The Websocket server similar to client server has app.yaml, and also as it is a background task we have no static files and the functions to be executed in main.py which is deployed via Flask application.
+### WebSocket Server
 
-- App.yaml contains the entrypoint for the application which is given as a gunicorn command which redirects it to main.py.
+The WebSocket Server has similar functionality to the Client Server but operates as a background task. Key components:
 
-- Main.py receives the client frames, makes an api call to the deepfake model and returns the results to the client.
+1. **app.yaml**: Contains the entrypoint for the application, which is directed to the `main.py` file.
+2. **main.py**: Receives client frames, makes API calls to the deepfake model, and returns results to the client.
 
-Deepfake Prediction Model
+### Deepfake Prediction Model
 
-The Deepfake Prediction model is deployed on the AI Platform which provides a PaaS infrastructure to provide machine learning inferencing as a service. The websocket server sends API requests and based on the volume of these requests and current resources, the AI Platform provides automatic scaling.  Following is a description of the files it contains:
+The Deepfake Prediction Model is deployed on the AI Platform, which offers machine learning inferencing as a service. The WebSocket server sends API requests, and the AI Platform scales automatically based on request volume and resource availability.
 
-- Prediction.py contains the ModelPrediction class which is defined based on the custom routine format. It defines the routines for loading the deepfake model and for performing inferencing.
+Key components:
+
+1. **Prediction.py**: Defines the `ModelPrediction` class, which handles the deepfake model loading and inferencing routines.
+
+## Contributing
+
+If you'd like to contribute to this project, please fork the repository and submit a pull request with your changes. Ensure that your contributions align with the project's goals and architecture.
+
+---
+
+This **Real-Time Face-Swapping Tool** offers a powerful, scalable solution for face swapping in videos using state-of-the-art deepfake algorithms. The modular design allows for easy expansion and deployment of other machine learning applications in real-time environments.
